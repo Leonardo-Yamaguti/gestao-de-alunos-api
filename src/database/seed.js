@@ -7,14 +7,15 @@ import Trabalho from '../models/trabalho.model.js';
 
 // Senha padrão de todos os alunos seedados, apenas para fins de teste/demonstração.
 const SENHA_PADRAO_ALUNO = '123456';
-const SENHA_PADRAO_ADMIN = 'admin123';
+const EMAIL_ADMIN = process.env.ADMIN_EMAIL || 'admin@escola.com';
+const SENHA_PADRAO_ADMIN = process.env.ADMIN_SENHA || 'admin123';
 
 async function seedAdministradores() {
   await Administrador.create([
     {
       _id: 'admin-principal',
       nome: 'Administrador do Sistema',
-      email: 'admin@escola.com',
+      email: EMAIL_ADMIN,
       senha: SENHA_PADRAO_ADMIN,
     },
   ]);

@@ -39,8 +39,11 @@ banco está vazio (veja [Dados fake pré-carregados](#dados-fake-pré-carregados
 - **swagger-ui-express** — renderização do Swagger UI a partir do YAML
 - **cors** — liberação de CORS para consumo por outros clientes/origens
 - **morgan** — log de requisições HTTP no console
+- **dotenv** — carregamento das variáveis de ambiente a partir do arquivo `.env`
 - **nodemon** (dependência de desenvolvimento) — reinício automático do servidor durante o
   desenvolvimento
+- **Mocha, SuperTest e Chai** — automação dos testes de serviço
+- **mongodb-memory-server** — banco MongoDB temporário e isolado para os testes locais
 
 A autenticação é real: senhas com hash (bcrypt) e sessões via JWT assinado.
 
@@ -80,12 +83,15 @@ docs/
 
 Pré-requisitos:
 
-- Node.js 18+ (usa `crypto.randomUUID`, disponível nativamente).
+- Node.js 20.19+.
 - Uma instância do **MongoDB** acessível (local ou remota).
 
 ```bash
 # instalar dependências
 npm install
+
+# criar a configuração local e ajustar os valores, se necessário
+cp .env.example .env
 
 # subir em modo produção
 npm start
@@ -96,6 +102,49 @@ npm run dev
 
 O servidor sobe por padrão em `http://localhost:3000` (pode ser alterado com a variável de
 ambiente `PORT`).
+
+As configurações disponíveis estão documentadas em [`.env.example`](.env.example). O arquivo
+`.env` real não é versionado, evitando que segredos sejam enviados ao repositório.
+
+## Automação dos testes de serviço
+
+O trabalho automatiza, de ponta a ponta, o seguinte fluxo:
+
+1. login como administrador;
+2. cadastro de um novo aluno;
+3. matrícula do aluno em uma disciplina (pré-condição da própria API);
+4. login como o aluno recém-cadastrado;
+5. entrega de um trabalho pelo próprio aluno.
+
+Os cenários são executados com **Mocha**, as chamadas HTTP são feitas com **SuperTest** e as
+validações usam **Chai**. A suíte também verifica autenticação inválida.
+
+### Data-Driven Testing
+
+Os dados não ficam escritos diretamente no teste. Eles estão em
+[`test/data/fluxos-alunos.json`](test/data/fluxos-alunos.json), e cada item do array `cenarios`
+gera um teste completo. Para adicionar outro cenário, basta acrescentar um novo objeto nesse
+arquivo JSON.
+
+Os logins reutilizáveis ficam separados em helpers:
+
+- [`test/helpers/login-admin.helper.js`](test/helpers/login-admin.helper.js)
+- [`test/helpers/login-aluno.helper.js`](test/helpers/login-aluno.helper.js)
+
+### Executar os testes
+
+```bash
+npm test
+```
+
+Quando `MONGODB_URI` não é informada, a suíte inicia automaticamente um MongoDB temporário em
+memória e o encerra ao final. Se a variável estiver definida, os testes usam a instância indicada.
+
+### Integração contínua
+
+O workflow [`.github/workflows/tests.yml`](.github/workflows/tests.yml) executa `npm ci` e
+`npm test` em cada `push`, `pull_request` ou acionamento manual. A pipeline usa Node.js 22 e um
+serviço MongoDB 7 isolado.
 
 ### Configuração do MongoDB
 

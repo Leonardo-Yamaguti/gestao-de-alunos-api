@@ -23,7 +23,9 @@ const swaggerDocument = yaml.load(openapiYaml);
 const app = express();
 
 app.use(cors());
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('dev'));
+}
 app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

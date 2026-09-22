@@ -1,0 +1,36 @@
+{
+  "administrador": {
+    "email": "admin@escola.com",
+    "senha": "admin123"
+  },
+  "cenarios": [
+    {
+      "descricao": "aluno entrega um trabalho de Programação Web",
+      "aluno": {
+        "nome": "Leonardo Yamaguitione",
+        "email": "leonardo.aluno@example.com",
+        "matricula": "2026001",
+        "senha": "Aluno@123"
+      },
+      "disciplinaId": "disciplina-programacao-web",
+      "trabalho": {
+        "titulo": "Automação de testes de API",
+        "descricao": "Trabalho criado pelo cenário automatizado com Mocha, SuperTest e Chai."
+      }
+    },
+    {
+      "descricao": "aluna entrega um trabalho de Matemática",
+      "aluno": {
+        "nome": "Marina Testes",
+        "email": "marina.aluna@example.com",
+        "matricula": "2026002",
+        "senha": "Aluna@123"
+      },
+      "disciplinaId": "disciplina-matematica",
+      "trabalho": {
+        "titulo": "Lista de exercícios automatizada",
+        "descricao": "Segundo conjunto de dados usado para comprovar o Data-Driven Testing."
+      }
+    }
+  ]
+}
