@@ -1,5 +1,7 @@
 # Gestão de Alunos API
 
+[![Testes de API](https://github.com/Leonardo-Yamaguti/gestao-de-alunos-api/actions/workflows/tests.yml/badge.svg)](https://github.com/Leonardo-Yamaguti/gestao-de-alunos-api/actions/workflows/tests.yml)
+
 API REST para gestão de alunos, disciplinas, notas e trabalhos, com persistência em MongoDB.
 
 ## Descrição
@@ -138,7 +140,9 @@ npm test
 ```
 
 Quando `MONGODB_URI` não é informada, a suíte inicia automaticamente um MongoDB temporário em
-memória e o encerra ao final. Se a variável estiver definida, os testes usam a instância indicada.
+memória e o encerra ao final. Se a variável estiver definida, os testes usam a instância indicada;
+nesse caso, utilize exclusivamente um banco isolado para testes. Antes e depois da suíte, os
+registros criados pelos cenários Data-Driven são removidos, permitindo reexecuções seguras.
 
 ### Integração contínua
 

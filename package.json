@@ -4,6 +4,9 @@
   "description": "API REST para gestão de alunos, disciplinas, notas e trabalhos, com persistência em MongoDB.",
   "main": "src/server.js",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
@@ -15,17 +18,16 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^18.0.2",
-    "esm": "^3.2.25",
-    "express": "^4.19.2",
-    "js-yaml": "^4.1.0",
+    "express": "^4.22.3",
+    "js-yaml": "^4.3.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.9.3",
-    "morgan": "^1.10.0",
+    "morgan": "^1.12.1",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "chai": "^6.2.2",
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.2",
     "mongodb-memory-server": "^11.3.0",
     "nodemon": "^3.1.4",
     "supertest": "^7.2.2"

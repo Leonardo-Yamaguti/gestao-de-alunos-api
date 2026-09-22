@@ -6,12 +6,21 @@ import request from 'supertest';
 import app from '../src/app.js';
 import { loginComoAdmin } from './helpers/login-admin.helper.js';
 import { loginComoAluno } from './helpers/login-aluno.helper.js';
+import { limparDadosDosCenarios } from './helpers/limpar-dados-teste.helper.js';
 
 const dados = JSON.parse(
   readFileSync(new URL('./data/fluxos-alunos.json', import.meta.url), 'utf8')
 );
 
 describe('Fluxo de entrega de trabalho (Data-Driven Testing)', () => {
+  before(async () => {
+    await limparDadosDosCenarios(dados.cenarios);
+  });
+
+  after(async () => {
+    await limparDadosDosCenarios(dados.cenarios);
+  });
+
   for (const cenario of dados.cenarios) {
     it(cenario.descricao, async () => {
       const credenciaisAdmin = {
@@ -44,15 +53,17 @@ describe('Fluxo de entrega de trabalho (Data-Driven Testing)', () => {
         .send({ alunoId });
 
       expect(matricula.status).to.equal(201);
+      expect(matricula.headers['content-type']).to.include('application/json');
       expect(matricula.body).to.include({
         alunoId,
         disciplinaId: cenario.disciplinaId,
       });
+      expect(matricula.body).to.have.property('id').that.is.a('string').and.is.not.empty;
 
       const tokenAluno = await loginComoAluno(app, {
         email: cenario.aluno.email,
         senha: cenario.aluno.senha,
-      });
+      }, alunoId);
 
       const entrega = await request(app)
         .post(`/api/alunos/${alunoId}/trabalhos`)
@@ -72,7 +83,17 @@ describe('Fluxo de entrega de trabalho (Data-Driven Testing)', () => {
         status: 'entregue',
       });
       expect(entrega.body).to.have.property('id').that.is.a('string').and.is.not.empty;
-      expect(entrega.body).to.have.property('dataEntrega');
+      expect(entrega.body).to.have.property('dataEntrega').that.is.a('string');
+      expect(Date.parse(entrega.body.dataEntrega)).not.to.be.NaN;
+
+      const trabalhosDoAluno = await request(app)
+        .get(`/api/alunos/${alunoId}/trabalhos`)
+        .set('Authorization', `Bearer ${tokenAluno}`);
+
+      expect(trabalhosDoAluno.status).to.equal(200);
+      expect(trabalhosDoAluno.headers['content-type']).to.include('application/json');
+      expect(trabalhosDoAluno.body).to.be.an('array');
+      expect(trabalhosDoAluno.body.some(({ id }) => id === entrega.body.id)).to.equal(true);
     });
   }
 });

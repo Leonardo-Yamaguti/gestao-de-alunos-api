@@ -8,11 +8,15 @@ export async function loginComoAdmin(app, credenciais) {
 
   expect(resposta.status).to.equal(200);
   expect(resposta.headers['content-type']).to.include('application/json');
-  expect(resposta.body).to.have.property('token').that.is.a('string').and.is.not.empty;
+  expect(resposta.body)
+    .to.have.property('token')
+    .that.is.a('string')
+    .and.matches(/^[^.]+\.[^.]+\.[^.]+$/);
   expect(resposta.body.usuario).to.include({
     email: credenciais.email,
     role: 'admin',
   });
+  expect(resposta.body.usuario).not.to.have.property('senha');
 
   return resposta.body.token;
 }

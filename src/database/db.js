@@ -9,6 +9,8 @@ mongoose.connection.on('error', (err) => {
 
 await mongoose.connect(MONGODB_URI);
 
-console.log(`MongoDB conectado em ${MONGODB_URI}`);
+if (process.env.NODE_ENV !== 'test') {
+  console.log('MongoDB conectado com sucesso.');
+}
 
 export default mongoose;
